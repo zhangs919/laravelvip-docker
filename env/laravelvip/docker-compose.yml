@@ -1,0 +1,102 @@
+version: '3'
+services:
+### mysql ###
+  # ecjia-db:
+  #   image: mysql:${MYSQL_VERSION}
+  #   ports:
+  #     - "${MYSQL_PORT}:3306"
+  #   volumes:
+  #     - ../../db/mysql:/var/lib/mysql
+  #     - ../../services/mysql/my.cnf:/etc/mysql/my.cnf:ro
+  #     - ../../logs/mysql:/var/log/
+  #   environment:
+  #     MYSQL_ROOT_PASSWORD: ecjia@password
+  #     MYSQL_DATABASE: ecjia-daojia
+  #     MYSQL_USER: ecjia
+  #     MYSQL_PASSWORD: ecjia123
+  #   env_file:
+  #     - ./.env
+
+### phpmyadmin ###
+  # ecjia-phpmyadmin:
+  #   image: phpmyadmin/phpmyadmin:latest
+  #   environment:
+  #     PMA_HOST: ecjia-db
+  #     PMA_PORT: 3306
+  #   ports:
+  #       - "${PHPMYADMIN_PORT}:80"
+  #   external_links:
+  #     - ecjia-db
+  #   depends_on:
+  #     - ecjia-db
+  #   env_file:
+  #     - ./.env
+  
+### php-fpm ###
+  ecjia-php:
+    build: 
+      context: ../../services/php-fpm
+      dockerfile: "Dockerfile-${PHP_VERSION}"
+    ports:
+      - "9000"
+    volumes:
+      - "${WEB_DIR}:/usr/share/nginx/html"
+      - ../../logs/ecjia:/usr/share/nginx/html/content/storages/logs
+      - ../../services/php-fpm/php.ini-${PHP_VERSION}:/usr/local/etc/php/php.ini:ro
+    # external_links:
+    #   - ecjia-db
+    # depends_on: 
+    #   - ecjia-db
+    env_file:
+      - ./.env
+    restart: always
+  
+### web server ###
+  ecjia-web:
+    image: nginx:latest
+    ports:
+      - "${WEB_HTTP}:80"
+      - "${WEB_HTTPS}:443"
+    volumes:
+      # app
+      - "${WEB_DIR}:/usr/share/nginx/html"
+      # nginx configs
+      - ../../services/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ../../services/nginx/conf.d:/etc/nginx/conf.d:ro
+      # certificates
+      - ../../services/nginx/ca/${CRT_NAME}.crt:/etc/nginx/server.crt:ro
+      - ../../services/nginx/ca/${KEY_NAME}.key:/etc/nginx/server.key:ro
+      # log
+      - ../../logs/nginx:/var/log/nginx/
+    external_links:
+      - ecjia-php
+    depends_on:
+      - ecjia-php
+    env_file:
+      - ./.env
+    restart: always
+
+### Redis ###
+
+#    redis:
+#    build: ../services/redis
+#    volumes:
+#      - .cache/redis:/data
+#    ports:
+#      - 6379:6379
+#    depends_on:
+#      - fpm
+
+### memcached ###
+
+  ecjia-memcached:
+    build: 
+      context: ../../services/memcached
+    volumes:
+      - ../../db/memcached:/var/lib/memcached
+    ports:
+      - "11211:11211"
+    env_file:
+      - ./.env
+    # depends_on:
+    #   - ecjia-db

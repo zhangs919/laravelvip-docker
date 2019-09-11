@@ -1,0 +1,182 @@
+[PHP]
+engine = On
+precision = 14
+
+output_buffering = On
+output_buffering = 4096
+
+;php zlib开启gzip，不建议开启
+zlib.output_compression = Off
+
+implicit_flush = Off
+unserialize_callback_func =
+;建议默认-1
+serialize_precision = -1
+;禁止函数，为了兼容性不建议添加
+disable_functions =
+disable_classes =
+
+zend.enable_gc = On
+;http头显示php版本，建议关闭，以免暴露版本号后被攻击
+expose_php = Off
+;php最长执行时间，建议设置长些，设置0为不显示
+max_execution_time = 600
+max_input_time = 60
+memory_limit = 128M
+
+error_reporting = E_ALL & ~E_DEPRECATED & ~E_STRICT
+;调试开发环境请开启，对解决问题很有帮助，但生产环境请OFF
+display_errors = Off
+display_startup_errors = Off
+log_errors = On
+log_errors_max_len = 1024
+ignore_repeated_errors = Off
+ignore_repeated_source = Off
+report_memleaks = On
+track_errors = Off
+html_errors = On
+variables_order = "GPCS"
+;5.3后版本建议CGP
+request_order = "CGP"
+register_argc_argv = Off
+auto_globals_jit = On
+;上传文件大小，因为现在图片越来越大，建议大点
+post_max_size = 30M
+auto_prepend_file =
+auto_append_file =
+default_mimetype = "text/html"
+default_charset = "UTF-8"
+doc_root =
+user_dir =
+
+;运行时加载组件，建议关闭
+enable_dl = Off
+;ecjia目前需要设置为1
+cgi.fix_pathinfo=1
+;上传限制设置，建议设高点。
+file_uploads = On
+upload_max_filesize = 30M
+max_file_uploads = 20
+
+allow_url_fopen = On
+allow_url_include = Off
+default_socket_timeout = 60
+
+[CLI Server]
+cli_server.color = On
+
+[Date]
+date.timezone = Asia/Shanghai
+
+[filter]
+
+[iconv]
+
+[intl]
+
+[sqlite3]
+
+[Pcre]
+
+[Pdo]
+
+[Pdo_mysql]
+pdo_mysql.cache_size = 2000
+pdo_mysql.default_socket=
+
+[Phar]
+
+[mail function]
+SMTP = localhost
+smtp_port = 25
+mail.add_x_header = On
+
+[ODBC]
+odbc.allow_persistent = On
+odbc.check_persistent = On
+odbc.max_persistent = -1
+odbc.max_links = -1
+odbc.defaultlrl = 4096
+odbc.defaultbinmode = 1
+
+[Interbase]
+ibase.allow_persistent = 1
+ibase.max_persistent = -1
+ibase.max_links = -1
+ibase.timestampformat = "%Y-%m-%d %H:%M:%S"
+ibase.dateformat = "%Y-%m-%d"
+ibase.timeformat = "%H:%M:%S"
+
+[MySQLi]
+mysqli.max_persistent = -1
+mysqli.allow_persistent = On
+mysqli.max_links = -1
+mysqli.cache_size = 2000
+mysqli.default_port = 3306
+mysqli.default_socket =
+mysqli.default_host =
+mysqli.default_user =
+mysqli.default_pw =
+mysqli.reconnect = Off
+[mysqlnd]
+mysqlnd.collect_statistics = On
+mysqlnd.collect_memory_statistics = Off
+
+[OCI8]
+
+[PostgreSQL]
+pgsql.allow_persistent = On
+pgsql.auto_reset_persistent = Off
+pgsql.max_persistent = -1
+pgsql.max_links = -1
+pgsql.ignore_notice = 0
+pgsql.log_notice = 0
+
+[bcmath]
+bcmath.scale = 0
+
+[browscap]
+
+[Session]
+session.save_handler = files
+session.save_path = "/tmp"
+session.use_strict_mode = 0
+session.use_cookies = 1
+session.use_only_cookies = 1
+session.name = PHPSESSID
+session.auto_start = 0
+session.cookie_lifetime = 0
+session.cookie_path = /
+session.cookie_domain =
+session.cookie_httponly =
+session.serialize_handler = php
+session.gc_probability = 1
+session.gc_divisor = 1000
+session.gc_maxlifetime = 1440
+session.referer_check =
+session.cache_limiter = nocache
+session.cache_expire = 180
+session.use_trans_sid = 0
+session.sid_length = 26
+session.trans_sid_tags = "a=href,area=href,frame=src,form="
+session.sid_bits_per_character = 5
+
+[Assertion]
+zend.assertions = -1
+
+[COM]
+
+[mbstring]
+
+[gd]
+
+[exif]
+
+[Tidy]
+tidy.clean_output = Off
+
+[soap]
+soap.wsdl_cache_enabled=1
+soap.wsdl_cache_dir="/tmp"
+soap.wsdl_cache_ttl=86400
+soap.wsdl_cache_limit = 5

@@ -1,0 +1,43 @@
+######
+# See: https://hub.docker.com/_/php/  基于官方php修改，适用于5.x至最新版本
+
+FROM php:5.6-fpm
+MAINTAINER ECJia Opensource Group <ecjia@ecjia.com>
+
+######
+# 你可以通过 docker-php-ext-install 安装组件
+######
+
+###国内下载加速
+    RUN sed -i 's/httpredir.debian.org/mirrors.163.com/g' /etc/apt/sources.list \
+    && sed -i 's/deb.debian.org/mirrors.163.com/g' /etc/apt/sources.list \
+    && sed -i 's/security.debian.org/mirrors.ustc.edu.cn/g' /etc/apt/sources.list \
+###安装编译php工具
+    && apt-get update && apt-get install -y \
+        libfreetype6-dev \
+        libjpeg62-turbo-dev \
+        libmcrypt-dev \
+        libxml2-dev \
+        libmemcached-dev \
+        zlib1g-dev \
+        libc-client-dev \
+        libkrb5-dev \
+        libldb-dev \
+        libldap2-dev \
+        unixodbc-dev \
+        libzip-dev
+###安装php组件
+    RUN docker-php-ext-install -j$(nproc) mcrypt bcmath exif sockets zip\
+    && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
+    && docker-php-ext-install -j$(nproc) gd \
+    && mkdir /usr/kerberos \    
+    && ln -s /usr/lib/x86_64-linux-gnu/mit-krb5/* /usr/kerberos \
+    && docker-php-ext-configure imap --with-kerberos --with-imap-ssl \
+    && docker-php-ext-install -j$(nproc)  imap \
+    && docker-php-ext-configure pdo_odbc --with-pdo-odbc=unixODBC,/usr \
+    && docker-php-ext-install -j$(nproc) pdo_odbc \
+    && ln -s /usr/lib/x86_64-linux-gnu/libldap.so /usr/lib/libldap.so \
+    && ln -s /usr/lib/x86_64-linux-gnu/liblber.so /usr/lib/liblber.so  \
+    && docker-php-ext-install -j$(nproc) ldap mysql mysqli pdo_mysql xmlrpc \
+    && pecl install http://pecl.php.net/get/memcached-2.2.0.tgz \
+    && docker-php-ext-enable memcached
